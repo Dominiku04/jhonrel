@@ -31,40 +31,42 @@
 
 <style>
     .chat-container {
-        max-width: 600px;
-        height: 500px;
+        max-width: 800px;
+        height: 700px;
         margin: auto;
         display: flex;
         flex-direction: column;
         border: 1px solid #ccc;
-        border-radius: 12px;
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .chat-header {
         background-color: #4a90e2;
         color: white;
-        padding: 16px;
+        padding: 20px;
         text-align: center;
         font-weight: bold;
-        font-size: 1.5rem;
+        font-size: 2rem;
     }
 
     .chat-messages {
-        padding: 15px;
+        padding: 20px;
         flex: 1;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 20px;
     }
 
     .message {
-        padding: 12px 16px;
-        border-radius: 8px;
-        max-width: 80%;
-        font-size: 1.2rem;
+        padding: 15px 20px;
+        border-radius: 10px;
+        max-width: 85%;
+        font-size: 1.5rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
     }
 
     .user {
@@ -79,34 +81,34 @@
 
     .chat-input {
         display: flex;
-        padding: 15px;
+        padding: 20px;
         border-top: 1px solid #ccc;
         background: white;
     }
 
     input {
         flex: 1;
-        padding: 12px;
+        padding: 15px;
         border: 1px solid #ccc;
-        border-radius: 6px;
+        border-radius: 8px;
         outline: none;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
 
     button {
-        margin-left: 10px;
-        padding: 12px 18px;
+        margin-left: 12px;
+        padding: 15px 22px;
         background-color: #4a90e2;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
 </style>
 
 <div class="chat-container">
-    <div class="chat-header">AI-REL</div>
+    <div class="chat-header">AI Chatbot</div>
     <div class="chat-messages">
         {#each chatHistory as msg (msg.text)}
             <div class="message {msg.type}">{msg.text}</div>
@@ -117,3 +119,4 @@
         <button on:click={onSubmit}>Send</button>
     </div>
 </div>
+
