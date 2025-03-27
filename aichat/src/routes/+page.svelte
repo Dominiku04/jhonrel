@@ -108,7 +108,7 @@
 </style>
 
 <div class="chat-container">
-    <div class="chat-header">AI Chatbot</div>
+    <div class="chat-header">AI-REL</div>
     <div class="chat-messages">
         {#each chatHistory as msg (msg.text)}
             <div class="message {msg.type}">{msg.text}</div>
