@@ -6,71 +6,55 @@ export const POST: RequestHandler = async ({ request }) => {
 
     try {
         const { chat } = await request.json();
-        if (!chat || chat.trim() === "") {
-            return json({ reply: "Please provide a message." });
-        }
+        if (!chat?.trim()) return json({ error: "Please provide a valid message." }, { status: 400 });
 
-        // User preferences (contextual details)
         const user = {
-            Name: "Jhon Rel Talmento",
-            Hobbies: ["Cooking", "Travel", "Singing", "Swimming"],
-            Likes: "Sleep and Eat",
-            Age: "21",
-            Mothername: "Jacquelyn Singua",
-            Home: "Morong Bataan",
-            School: "Gordon College",
-            Birthday: "Dec 19, 2003",
-            Zodiacsign: "Sagittarius"
+            name: "Jhon Rel Talmento",
+            hobbies: ["Cooking", "Travel", "Singing", "Swimming"],
+            likes: "Sleep and Eat",
+            age: "21",
+            mothername: "Jacquelyn Singua",
+            home: "Morong Bataan",
+            school: "Gordon College",
+            birthday: "Dec 19, 2003",
+            zodiacsign: "Sagittarius"
         };
 
-        // Construct a concise, context-aware prompt
-        const prompt = `You are a friendly AI assistant. Respond naturally and conversationally.
+        const prompt = `
+        You are an AI assistant. Return only a valid JSON response following this schema:
 
-User Context:
-- Name: ${user.Name}
-- Age: ${user.Age}
-- Home: ${user.Home}
-- School: ${user.School}
-- Hobbies: ${user.Hobbies.join(", ")}
-- Birthday: ${user.Birthday}
-- Zodiac Sign: ${user.Zodiacsign}
+        {
+            "summary_of_context_data": "Brief summary of the user's context.",
+            "master_user_name": "${user.name}",
+            "sensitive_information_present": true or false,
+            "confidence_level": A number from 1 to 10,
+            "user_persona_description": "A description of the user's personality based on context."
+        }
 
-Guidelines:
-- Provide helpful and engaging responses
-- Speak in a warm, friendly tone
-- Personalize responses when possible
-- Avoid technical jargon
+        User Context:
+        - Name: ${user.name}
+        - Age: ${user.age}
+        - Home: ${user.home}
+        - School: ${user.school}
+        - Hobbies: ${user.hobbies.join(", ")}
+        - Birthday: ${user.birthday}
+        - Zodiac Sign: ${user.zodiacsign}
 
-User's Message: "${chat}"`;
+        **User Request:** "${chat}"
+        **Strict JSON Response (no extra text):**`;
 
         const response = await ollama.chat({
             model: "deepseek-r1:latest",
             messages: [{ role: "user", content: prompt }]
         });
 
-        // Comprehensive text cleaning and normalization
-        const cleanReply = cleanResponseText(response?.message?.content || "");
+        const rawReply = response?.message?.content || "{}";
+        const match = rawReply.match(/\{[\s\S]*\}/);
 
-        return json({ reply: cleanReply });
+        return json(match ? JSON.parse(match[0]) : { error: "Invalid AI response format" });
     } catch (error) {
         console.error("Chat API Error:", error);
-        return json({ reply: "I'm having trouble processing your request right now. Could you try again?" });
+        return json({ error: "An error occurred while processing your request." }, { status: 500 });
     }
 };
 
-// Comprehensive text cleaning function
-function cleanResponseText(text: string): string {
-    // Remove common markdown and formatting elements
-    let cleanedText = text
-        .replace(/\*\*|__/g, '')  // Remove bold markers
-        .replace(/\*|_/g, '')     // Remove italic markers
-        .replace(/##+ /g, '')     // Remove markdown headers
-        .replace(/<think>.*?<\/think>/gs, '')  // Remove thinking sections
-        .replace(/<[^>]*>/g, '')  // Remove any HTML-like tags
-        .replace(/\s+/g, ' ')     // Normalize whitespace
-        .replace(/^\s+|\s+$/g, '') // Trim leading/trailing whitespace
-        .trim();
-
-    // Fallback if text becomes empty
-    return cleanedText || "I'm sorry, but I couldn't generate a meaningful response.";
-}
