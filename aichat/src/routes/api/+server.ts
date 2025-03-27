@@ -28,7 +28,7 @@ export const POST: RequestHandler = async ({ request }) => {
             "master_user_name": "${user.name}",
             "sensitive_information_present": true or false,
             "confidence_level": A number from 1 to 10,
-            "user_persona_description": "A description of the user's personality based on context."
+            "user_persona_description": "A description of the user based on context."
         }
 
         User Context:
